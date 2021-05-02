@@ -6,6 +6,8 @@ final_dict = {}
 # ticker_list = {}
 
 # Hotstocks page
+
+
 def hotstocks():
     base_url = 'https://money.cnn.com/data/hotstocks/'
     page = requests.get(base_url)
@@ -21,18 +23,17 @@ def hotstocks():
         ticker_list = {}
         table = header.find_next_sibling("table")
         all_rows = table.find_all("tr")
-        # Remove the header row
+        # Removing the header row
         del all_rows[0]
         for row in all_rows:
             a = row.find("a").text.strip()
             span = row.find("span").text.strip()
-            # stock_name = a + " " + span
             ticker_list[a] = span
         final_dict[header.contents[0]] = ticker_list
 
     for category in final_dict:
         print(category + ":")
-        for k,v in final_dict[category].items():
+        for k, v in final_dict[category].items():
             print(k+" "+v)
         print("\n")
 
@@ -62,9 +63,10 @@ def stock_info(ticker):
 
 def export_csv():
     # Get details
+    print("\nExporting CSV file.....")
     exporting_list = []
     for category in final_dict:
-        for ticker,title in final_dict[category].items():
+        for ticker, title in final_dict[category].items():
             # Format data for CSV
             temp_list = []
             temp_list.append(category)
@@ -78,13 +80,16 @@ def export_csv():
             exporting_list.append(temp_list)
     # Export
     with open('stocks.csv', mode='w') as csv_file:
-        writer =  csv.writer(csv_file)
+        writer = csv.writer(csv_file)
         writer.writerows(exporting_list)
+
 
 # Part 1
 hotstocks()
-ticker = input("User inputs: ")
-ticker = "COTY"
+try:
+    ticker = int(input("User inputs: "))
+except:
+    print("Invalid input!")
 # Part 2
 stock_details = stock_info(ticker)
 print("The data for "+ticker+" "+stock_details["Name"]+" is the following: ")
@@ -94,3 +99,7 @@ print("VOLUME: "+stock_details["Volume"])
 print("MARKET CAP: "+stock_details["Market cap"])
 # Part 3
 export_csv()
+print("\nDone!")
+
+#! TODO: Random ticker input validation
+#! TODO: Add comments
